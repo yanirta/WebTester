@@ -12,8 +12,12 @@ The tool supports three basic modes:
 In order to run
 
 ## Running Interactive mode
+
 - TODO
+
 ## Running Iterative mode
+
 - TODO
+
 ## Running Attached mode
 - TODO
