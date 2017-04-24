@@ -1,23 +1,96 @@
 # Web-Tester
-Web-Tester is a Cli standalone tool to perform visual tests using Selenium and Applitools without coding.
+Web-Tester is a Cli standalone tool to perform visual validation tests using Selenium and Applitools without coding.
 
-If you don't have your Applitools account yet, please go and sign up at https://applitools.com/sign-up/
+If you don't have your Applitools account yet,
+please sign up first at https://applitools.com/sign-up/ and get your Applitools api-key
+that will be used next to execute the tests.
 
-The tool supports three basic modes:
+The tool supports three general modes:
 
-1. Interactive - Launches the browser and waits for a tag/name to capture it for validation.
-2. Iterative - Automatically iterates over a list of urls or a sitemap.xml of specified website
-3. Attached - The tool will validate existing selenium session
+1. Single - Validate single page based on provided url.
+2. Interactive - Opens browser session to validated on demand, what's currently displayed.
+3. Iterative - Automatically validate list of urls provided in sitemap.xml format.
 
-In order to run
+To run in each one of the mode see the following sections.
+Note that the Web-Tester was built in Java so every cli command should start with
+>Java -jar Web-Tester.jar [mode] [mode specific parametes...]
 
-## Running Interactive mode
+## 1. Runnig Single mode
+Made to easily validate single url without user intervention.
 
-- TODO
+For example:
+> Java -jar Web-Tester.jar -k [API_KEY] -pu https://applitools.com/resources
 
-## Running Iterative mode
++ Required parametes:
+    + `-k [api-key]` , Applitools api key
+    + `-pu [url]` , Page url to validate
++ Optional paramaeters:
+    + `-tn [name]`, Test name, otherwise will be derived from page-url
+    + More optional parameters can be found in "[Shared parameters in all modes](#shared-parameters-in-all-modes)" section
 
-- TODO
+##  2. Running Interactive mode
+Provides on demand method to validate screenshot while performing manual testing.
+Once executed, the tool will open the browser and wait for test/step name from the user,
+which will trigger a visual validation of what's currently displayed.
+The user will be able to drive the test and use
+Applitools at any point to visually validate the page currently displayed.
+The tool will continue to prompt for the next screens until the exit character ('~')
+is inserted.
 
-## Running Attached mode
-- TODO
+> Java -jar Web-Tester.jar Interactive -k [API_KEY] -bn MyBatch
+
++ Required parametes:
+    + `-k [api-key]` , Applitools api key
+    + `-st` , Use single test for all on-demand steps
+    + `-bn [name]` , Batch name to aggregate all the tests
++ Optional parameters:
+    + `-tn [name]` , Test name, if `-st` is set
+    + More optional parameters can be found in "[Shared parameters in all modes](#shared-parameters-in-all-modes)" section
+
+## 3. Running Iterative mode
+Iterates over a defined set of urls automatically
+
+> Java -jar Web-Tester.jar Iterate -k [API-KEY] -lo https://applitools.com/sitemap.xml
+
++ Required parametes:
+    + `-k [api-key]` , Applitools api key
+    + `-lo [url]` , The url to sitemap.xml file.
+    Note that local path can be specified using the following syntax: file:///Users/yanir/mySitemaps/sitemap.xml
++ Optional parameters:
+    + More optional parameters can be found in "[Shared parameters in all modes](#shared-parameters-in-all-modes)" section
+
+## Shared parameters in all modes
++ `-br [browser]` - Set the browser to be used
++ `-vs [width x height]` - View port size to be achieved before validation
++ `-ba [name]` - Batch name
++ `-px [url]` - Proxy url for Applitools communication, for example: http://proxy.myorg.com:8080
++ `-ml [match-level]` - Match level, one of Strict, Layout, Layout2 or Content. Default: Strict
++ `-se [url]` - Selenium server/grid url
++ `-an [name]` - Application name
++ `-bn [name]` - Baseline environment name
++ `-ct [tob:bottom:left:right]` - Cut provider, avoid the specified amount of pixels from the bound of the screen.
+IE, 100 pixels from the top will be given as `-ct 100,0,0,0`
++ `-as [url]` - Applitools server url
++ `-df` - Disable full page screenshot, will capture only the visible area of the page
++ `-us` - Use alternative method of scrolling when taking the screenshot
++ `-sb` - Show scrollbars, in some cases will capture the scrollbars as part of the screenshot
++ `-wb [seconds]` - Set wait before screenshot, will put sleep between scrolling and taking segment screenshot
++ `-cf [path]` - Custom desired capabilities file
+
+## Other use cases
+
++ Running Appium iOS mobile iterative test on Saucelabs
+
+ > Java -jar Web-Tester.jar Iterate -k [API-KEY] -lo https://applitools.com/sitemap.xml
+ -cf iphone7_sauce.json -se <http://USERNAME:ACCESSKEY@ondemand.saucelabs.com:80/wd/hub> -ct 65:0:0:0
+
+provided that 'iphone7_sauce.json' content is:
+```javascript
+{
+    "deviceName": "iPhone 7 Simulator",
+    "platformVersion": "10.0",
+    "platformName": "iOS",
+    "browserName": "Safari"
+}
+```
+Note: -ct will avoid 65 pixels from the top of the screen which are the status and the address bar of iPhone.
