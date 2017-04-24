@@ -93,4 +93,4 @@ provided that 'iphone7_sauce.json' content is:
     "browserName": "Safari"
 }
 ```
-Note: -ct will avoid 65 pixels from the top of the screen which are the status and the address bar of iPhone.
+Note: passing `-ct 65:0:0:0` argument will avoid 65 pixels from the top of the screen which are the status and the address bar of iPhone.
