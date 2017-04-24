@@ -1,3 +1,4 @@
+Name: WebTester
 Manifest-Version: 1.0
 Main-Class: WebTester
-
+Implementation-Version: 0.3
