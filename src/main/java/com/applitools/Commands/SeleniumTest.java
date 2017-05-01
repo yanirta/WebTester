@@ -51,10 +51,13 @@ public abstract class SeleniumTest extends Test {
 
     @Override
     public void ValidateParams() {
-        Validator.areNotAllowedTogether(capsFile, browser, "Caps file (-cf)", "browser (-br)");
-        Validator.areNotAllowedTogether(sessionId, browser, "Session id (-id)", "browser (-br)");
-        Validator.areNotAllowedTogether(sessionId, capsFile, "Session id (-id)", "Caps file (-cf)");
-        Validator.requiresSecond(capsFile, seleniumServerURL, "Caps file (-cf)", "Selenium server (-se)");
+        Validator.givenString(capsFile, "Caps file (-cf)").isSetThen()
+                .required(seleniumServerURL, "Selenium server (-se)")
+                .notAllowed(browser, "browser (-br)");
+
+        Validator.givenString(sessionId, "Session id (-id)")
+                .notAllowed(browser, "browser (-br)")
+                .notAllowed(capsFile, "Caps file (-cf)");
     }
 
     @Override

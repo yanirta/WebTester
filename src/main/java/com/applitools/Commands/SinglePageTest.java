@@ -18,7 +18,8 @@ public class SinglePageTest extends ApplitoolsTest {
     @Override
     public void ValidateParams() {
         super.ValidateParams();
-        Validator.anyRequired(testName, pageURL, "Test name (-tn)", "Page url (-pu)");
+        Validator.givenString(testName, "Test name (-tn)").isNotSetThen()
+                .required(pageURL, "Page url (-pu)");
     }
 
     public void Execute() {
