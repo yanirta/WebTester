@@ -26,8 +26,8 @@ public class SinglePageTest extends ApplitoolsTest {
         if (!Strings.isNullOrEmpty(pageURL)) driver_.get(pageURL);
         if (Strings.isNullOrEmpty(testName)) testName = pageURL;
 
-        eyes_.open(driver_, appName, testName);
-        eyes_.checkWindow();
+        eyesOpen(testName);
+        eyesCheckWindow(testName);
         TestResults result = eyes_.close(false);
 
         printResult(result, testName);

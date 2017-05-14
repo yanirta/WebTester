@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 import java.security.InvalidParameterException;
 
 public abstract class ApplitoolsTest extends SeleniumTest {
-    private static final String CURR_VERSION = "0.0.4";
+    private static final String CURR_VERSION = "0.0.5";
     //Api-key
     @Parameter(names = {"-k", "--apiKey"}, description = "Applitools api key", required = true)
     protected String apiKey;
@@ -131,5 +131,18 @@ public abstract class ApplitoolsTest extends SeleniumTest {
         if (result.isNew()) return "New";
         if (result.isPassed()) return "Passed";
         return "Failed";
+    }
+
+    protected void eyesOpen(String appName, String testName) {
+        eyes_.open(driver_, appName, testName);
+    }
+
+    protected void eyesOpen(String testName) {
+        eyesOpen(appName, testName);
+    }
+
+    protected void eyesCheckWindow(String tag) {
+        bugify(driver_);
+        eyes_.checkWindow(tag);
     }
 }

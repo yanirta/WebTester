@@ -55,7 +55,7 @@ public abstract class SeleniumTest extends Test {
                 .required(seleniumServerURL, "Selenium server (-se)")
                 .notAllowed(browser, "browser (-br)");
 
-        Validator.givenString(sessionId, "Session id (-id)")
+        Validator.givenString(sessionId, "Session id (-id)").isSetThen()
                 .notAllowed(browser, "browser (-br)")
                 .notAllowed(capsFile, "Caps file (-cf)");
     }
