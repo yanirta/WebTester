@@ -1,8 +1,12 @@
 package com.applitools.Commands;
 
 import org.apache.commons.io.IOUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -13,15 +17,17 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 public abstract class Test implements ITest {
-    private static final String BUGIFY_FILENAME = "bugify.js";
+    private static final String JS_EXECUTE_BEFORE_STEP_FILENAME = "execute_before_step.js";
+    private static final String JS_EXECUTE_AFTER_STEP_FILENAME = "execute_after_step.js"; //TODO
 
-    private String bugify_js_ = null;
+    private String execute_before_step_js_ = null;
 
     public final void Run() {
         try {
             ValidateParams();
             Init();
             Execute();
+            TearDown();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -40,33 +46,39 @@ public abstract class Test implements ITest {
     public abstract void ValidateParams();
 
     public void Init() throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
-        init_bugify();
+        initJsExecutes();
     }
 
     public abstract void Execute();
 
     public abstract void TearDown();
 
-    public void bugify(WebDriver driver) {
-        if (null != bugify_js_) {
+    public void executeJsBeforeStep(WebDriver driver) {
+        if (null != execute_before_step_js_) {
             try {
-                Thread.sleep(0);
-                ((JavascriptExecutor) driver).executeScript(bugify_js_);
+                (new WebDriverWait(driver, 30))
+                        .until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
+                Thread.sleep(1000); //TODO
+                ((JavascriptExecutor) driver).executeScript(execute_before_step_js_);
+                Thread.sleep(1000); //TODO
             } catch (InterruptedException e) {
-                System.out.printf("Interupted exception in sleep \n");
+                System.out.printf("Interrupted exception in sleep \n");
                 System.out.printf("%s \n", e.getMessage());
                 System.out.printf("Cause %s \n", e.getCause().getMessage());
+            } catch (JavascriptException e) {
+                System.out.printf("Error in JS execution: %s", e.getMessage());
             }
         }
+
     }
 
-    private void init_bugify() throws IOException {
-        File bugifyfile = new File(BUGIFY_FILENAME);
-        if (bugifyfile.exists()) {
-            System.out.printf("Using %s \n", BUGIFY_FILENAME);
-            FileInputStream inputStream = new FileInputStream(bugifyfile);
+    private void initJsExecutes() throws IOException {
+        File executeJS = new File(JS_EXECUTE_BEFORE_STEP_FILENAME);
+        if (executeJS.exists()) {
+            System.out.printf("Using %s \n", JS_EXECUTE_BEFORE_STEP_FILENAME);
+            FileInputStream inputStream = new FileInputStream(executeJS);
             try {
-                bugify_js_ = IOUtils.toString(inputStream);
+                execute_before_step_js_ = IOUtils.toString(inputStream);
             } finally {
                 inputStream.close();
             }

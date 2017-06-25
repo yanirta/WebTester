@@ -6,6 +6,7 @@ import com.applitools.eyes.selenium.Eyes;
 import com.applitools.eyes.selenium.StitchMode;
 import com.beust.jcommander.Parameter;
 import com.google.common.base.Strings;
+import org.openqa.selenium.By;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,7 +16,7 @@ import java.net.URISyntaxException;
 import java.security.InvalidParameterException;
 
 public abstract class ApplitoolsTest extends SeleniumTest {
-    private static final String CURR_VERSION = "0.0.5";
+    private static final String CURR_VERSION = "0.0.7";
     //Api-key
     @Parameter(names = {"-k", "--apiKey"}, description = "Applitools api key", required = true)
     protected String apiKey;
@@ -68,6 +69,10 @@ public abstract class ApplitoolsTest extends SeleniumTest {
     @Parameter(names = {"-wb", "--wait"}, description = "Set wait in seconds between screenshots sections")
     protected int waitBeforeScreenshot = 0;
 
+    //Region selector
+    @Parameter(names = {"-re", "--region"}, description = "Focus on spicific region by css-selector")
+    protected String regionSelector = null;
+
     protected Eyes eyes_;
 
     public void Init() throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
@@ -88,8 +93,14 @@ public abstract class ApplitoolsTest extends SeleniumTest {
         if (!Strings.isNullOrEmpty(serverUrl)) eyes_.setServerUrl(new URI(serverUrl));
         if (!Strings.isNullOrEmpty(proxyURL)) eyes_.setProxy(new ProxySettings(proxyURL));
         if (!Strings.isNullOrEmpty(baselineEnvName)) eyes_.setBaselineEnvName(baselineEnvName);
-        if (!Strings.isNullOrEmpty(batchName)) eyes_.setBatch(new BatchInfo(batchName));
         if (waitBeforeScreenshot > 0) eyes_.setWaitBeforeScreenshots(waitBeforeScreenshot * 1000);
+
+        //Batch Name
+        if (batchName != null) {
+            String[] batch = batchName.split(":");
+            if (!Strings.isNullOrEmpty(batchName)) eyes_.setBatch(new BatchInfo(batch[0]));
+            if (batch.length == 2) eyes_.getBatch().setId(batch[1]);
+        }
 
         //Match level
         if (!Strings.isNullOrEmpty(matchLevel)) {
@@ -141,8 +152,13 @@ public abstract class ApplitoolsTest extends SeleniumTest {
         eyesOpen(appName, testName);
     }
 
-    protected void eyesCheckWindow(String tag) {
-        bugify(driver_);
-        eyes_.checkWindow(tag);
+    protected void eyesCheck(String tag) {
+            executeJsBeforeStep(driver_);
+
+        if (Strings.isNullOrEmpty(regionSelector))
+            eyes_.checkWindow(tag);
+        else
+            eyes_.checkRegion(By.cssSelector(regionSelector), tag, !disableFullPageScreenshot);
+
     }
 }

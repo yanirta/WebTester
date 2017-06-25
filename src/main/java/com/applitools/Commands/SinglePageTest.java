@@ -27,7 +27,7 @@ public class SinglePageTest extends ApplitoolsTest {
         if (Strings.isNullOrEmpty(testName)) testName = pageURL;
 
         eyesOpen(testName);
-        eyesCheckWindow(testName);
+        eyesCheck(testName);
         TestResults result = eyes_.close(false);
 
         printResult(result, testName);

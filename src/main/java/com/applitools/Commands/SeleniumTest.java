@@ -14,6 +14,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.logging.LogType;
+import org.openqa.selenium.logging.LoggingPreferences;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
@@ -25,6 +28,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
+import java.util.logging.Level;
 
 public abstract class SeleniumTest extends Test {
     private static final String DEFAULT_SERVER = "http://localhost:4444/wd/hub/";
@@ -44,7 +48,8 @@ public abstract class SeleniumTest extends Test {
 
     //Session id to attach
     @Parameter(names = {"-id", "--sessionId"}, description = "Selenium session-id to attach the test", hidden = true)
-//TODO
+
+    //TODO
     protected String sessionId;
 
     protected WebDriver driver_;
@@ -62,6 +67,7 @@ public abstract class SeleniumTest extends Test {
 
     @Override
     public void Init() throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
+        super.Init();
         if (Strings.isNullOrEmpty(browser)) browser = "Firefox";
         if (!Strings.isNullOrEmpty(sessionId)) {
             if (Strings.isNullOrEmpty(seleniumServerURL)) seleniumServerURL = DEFAULT_SERVER;
@@ -134,7 +140,16 @@ public abstract class SeleniumTest extends Test {
             case Safari:
                 return new SafariDriver();
             case Firefox:
-                FirefoxDriver driver = new FirefoxDriver();
+                DesiredCapabilities caps = DesiredCapabilities.firefox();
+                LoggingPreferences pref = new LoggingPreferences();
+                pref.enable(LogType.BROWSER, Level.OFF);
+                pref.enable(LogType.CLIENT, Level.OFF);
+                pref.enable(LogType.DRIVER, Level.OFF);
+                pref.enable(LogType.PERFORMANCE, Level.OFF);
+                pref.enable(LogType.PROFILER, Level.OFF);
+                pref.enable(LogType.SERVER, Level.OFF);
+                caps.setCapability(CapabilityType.LOGGING_PREFS, pref);
+                FirefoxDriver driver = new FirefoxDriver(caps);
                 return driver;
             default:
                 return null;

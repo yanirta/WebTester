@@ -77,7 +77,7 @@ public class IterativeTest extends ApplitoolsTest {
 
             eyesOpen(currAppName, testName);
             driver_.get(page.toString());
-            eyesCheckWindow(page.toString());
+            eyesCheck(page.toString());
 
             TestResults result = eyes_.close(false);
             ++i;
