@@ -79,7 +79,7 @@ IE, 100 pixels from the top will be given as `-ct 100,0,0,0`
 
 ## Other use cases
 
-+ Running Appium iOS mobile iterative test on Saucelabs
+### Running Appium iOS mobile iterative test on Saucelabs
 
  > Java -jar Web-Tester.jar Iterate -k [API-KEY] -lo https://applitools.com/sitemap.xml
  -cf iphone7_sauce.json -se <http://USERNAME:ACCESSKEY@ondemand.saucelabs.com:80/wd/hub> -ct 65:0:0:0
@@ -94,3 +94,11 @@ provided that 'iphone7_sauce.json' content is:
 }
 ```
 Note: passing `-ct 65:0:0:0` argument will avoid 65 pixels from the top of the screen which are the status and the address bar of iPhone.
+
+### Executing custom code before validations
+The WebTester supports execution of custom JavaScript code before every checkpoint.  
+The tool expects for a file named 'execute_before_step.js' to be found in the execution folder.  
+The file can contain any JavaScript syntax supported by the client web-page.  
+
+Note that in most of the cases the logic will have to wait for elements to load before actually invoking the
+ actions on them.
