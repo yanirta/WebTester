@@ -6,7 +6,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class WebTester {
-    public static String CURR_VER = "0.4"; //TODO find more suitable place and logic
 
     public static void main(String[] args) {
 //        Logger.getLogger("geckodriver").setLevel(Level.OFF);

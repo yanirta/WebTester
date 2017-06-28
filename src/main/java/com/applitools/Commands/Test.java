@@ -29,15 +29,15 @@ public abstract class Test implements ITest {
             Execute();
             TearDown();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            printException(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            printException(e);
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            printException(e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            printException(e);
         } catch (SAXException e) {
-            e.printStackTrace();
+            printException(e);
         } finally {
             TearDown();
         }
@@ -58,13 +58,13 @@ public abstract class Test implements ITest {
             try {
                 (new WebDriverWait(driver, 30))
                         .until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
-                Thread.sleep(1000); //TODO
+                //Thread.sleep(1000); //TODO
                 ((JavascriptExecutor) driver).executeScript(execute_before_step_js_);
-                Thread.sleep(1000); //TODO
-            } catch (InterruptedException e) {
-                System.out.printf("Interrupted exception in sleep \n");
-                System.out.printf("%s \n", e.getMessage());
-                System.out.printf("Cause %s \n", e.getCause().getMessage());
+                //Thread.sleep(1000); //TODO
+//            } catch (InterruptedException e) {
+//                System.out.printf("Interrupted exception in sleep \n");
+//                System.out.printf("%s \n", e.getMessage());
+//                System.out.printf("Cause %s \n", e.getCause().getMessage());
             } catch (JavascriptException e) {
                 System.out.printf("Error in JS execution: %s", e.getMessage());
             }
@@ -83,5 +83,10 @@ public abstract class Test implements ITest {
                 inputStream.close();
             }
         }
+    }
+
+    private void printException(Exception e) {
+        System.out.printf("Error: %s", e.getMessage());
+        e.printStackTrace();
     }
 }
