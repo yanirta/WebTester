@@ -73,6 +73,9 @@ public abstract class ApplitoolsTest extends SeleniumTest {
     @Parameter(names = {"-re", "--region"}, description = "Focus on spicific region by css-selector")
     protected String regionSelector = null;
 
+    @Parameter(names = {"-sr", "--scaleRatio"}, description = "Overrides pixel-ratio")
+    protected String scaleRatio = null;
+
     protected Eyes eyes_;
 
     public void Init() throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
@@ -93,6 +96,7 @@ public abstract class ApplitoolsTest extends SeleniumTest {
         if (!Strings.isNullOrEmpty(serverUrl)) eyes_.setServerUrl(new URI(serverUrl));
         if (!Strings.isNullOrEmpty(proxyURL)) eyes_.setProxy(new ProxySettings(proxyURL));
         if (!Strings.isNullOrEmpty(baselineEnvName)) eyes_.setBaselineEnvName(baselineEnvName);
+        if (!Strings.isNullOrEmpty(scaleRatio)) eyes_.setScaleRatio(Double.parseDouble(scaleRatio));
         if (waitBeforeScreenshot > 0) eyes_.setWaitBeforeScreenshots(waitBeforeScreenshot * 1000);
 
         //Batch Name
@@ -107,6 +111,7 @@ public abstract class ApplitoolsTest extends SeleniumTest {
             MatchLevel ml = Utils.parseEnum(MatchLevel.class, matchLevel);
             eyes_.setMatchLevel(ml);
         }
+
         //Viewport size
         if (!Strings.isNullOrEmpty(viewportSize)) {
             String[] dims = viewportSize.split("x");
@@ -153,7 +158,7 @@ public abstract class ApplitoolsTest extends SeleniumTest {
     }
 
     protected void eyesCheck(String tag) {
-            executeJsBeforeStep(driver_);
+        executeJsBeforeStep(driver_);
 
         if (Strings.isNullOrEmpty(regionSelector))
             eyes_.checkWindow(tag);

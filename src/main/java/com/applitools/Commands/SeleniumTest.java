@@ -14,9 +14,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
@@ -27,6 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -56,29 +55,62 @@ public abstract class SeleniumTest extends Test {
 
     @Override
     public void ValidateParams() {
-        Validator.givenString(capsFile, "Caps file (-cf)").isSetThen()
-                .required(seleniumServerURL, "Selenium server (-se)")
-                .notAllowed(browser, "browser (-br)");
+//        Validator.given(capsFile, "Caps file (-cf)").isSetThen()
+//                .required(seleniumServerURL, "Selenium server (-se)")
+//                .notAllowed(browser, "browser (-br)");
 
-        Validator.givenString(sessionId, "Session id (-id)").isSetThen()
+        Validator.given(sessionId, "Session id (-id)")
+                .isSetThen()
                 .notAllowed(browser, "browser (-br)")
                 .notAllowed(capsFile, "Caps file (-cf)");
+
+
     }
 
     @Override
     public void Init() throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
         super.Init();
-        if (Strings.isNullOrEmpty(browser)) browser = "Firefox";
+
+        driver_ = InitDriver(sessionId, browser, seleniumServerURL, prepareCapabilities());
+    }
+
+    protected WebDriver InitDriver(String sessionId, String browser, String serverUrl, DesiredCapabilities caps) throws IOException {
         if (!Strings.isNullOrEmpty(sessionId)) {
-            if (Strings.isNullOrEmpty(seleniumServerURL)) seleniumServerURL = DEFAULT_SERVER;
-            driver_ = new AttachedWebDriver(new URL(seleniumServerURL), sessionId);
-        } else if (!Strings.isNullOrEmpty(seleniumServerURL)) {
-            URL server = new URL(seleniumServerURL);
-            DesiredCapabilities caps = prepareCapabilities();
-            driver_ = prepBrowser(server, caps);
-        } else {
-            driver_ = prepBrowser(getSafeBrowser(browser));
+            URL seleniumServer = new URL(Strings.isNullOrEmpty(serverUrl) ? DEFAULT_SERVER : serverUrl);
+            return new AttachedWebDriver(seleniumServer, sessionId);
         }
+
+        if (!Strings.isNullOrEmpty(serverUrl))
+            return prepRemoteDriver(new URL(serverUrl), caps);
+
+        return prepLocalDriver(browser, caps);
+    }
+
+    protected WebDriver prepLocalDriver(String browser, DesiredCapabilities caps) {
+        Browser safeBrowser = getSafeBrowser(browser);
+        switch (safeBrowser) {
+            case Chrome:
+                HashMap options = (HashMap) caps.getCapability(ChromeOptions.CAPABILITY);
+                options = (options == null) ? new HashMap() : options;
+                options.put("args", Arrays.asList(new String[]{"disable-infobars"}));
+                caps.setCapability(ChromeOptions.CAPABILITY, options);
+                caps.merge(caps);
+                return new ChromeDriver(caps);
+            case IE:
+                return new InternetExplorerDriver(caps);
+            case Safari:
+                return new SafariDriver(caps);
+            case Firefox:
+                FirefoxDriver driver = new FirefoxDriver(caps);
+                driver.setLogLevel(Level.OFF);
+                return driver;
+            default:
+                return null;
+        }
+    }
+
+    protected WebDriver prepRemoteDriver(URL serverUrl, DesiredCapabilities caps) {
+        return new RemoteWebDriver(serverUrl, caps);
     }
 
     private DesiredCapabilities prepareCapabilities() throws IOException {
@@ -90,6 +122,7 @@ public abstract class SeleniumTest extends Test {
 
     private static DesiredCapabilities readCapabilities(String capsfile) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
+
         return new DesiredCapabilities(
                 (Map<String, ?>) mapper.readValue(
                         new File(capsfile),
@@ -100,7 +133,7 @@ public abstract class SeleniumTest extends Test {
     private static Browser getSafeBrowser(String browser) throws IllegalArgumentException {
         try {
             if (Strings.isNullOrEmpty(browser)) return DEFAULT_BROWSER;
-            return Browser.valueOf(StringUtils.capitalize(browser));
+            return Browser.valueOf(StringUtils.capitalize(browser.toLowerCase()));
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Wrong browser argument");
         }
@@ -111,7 +144,6 @@ public abstract class SeleniumTest extends Test {
     }
 
     private static DesiredCapabilities prepareCaps(Browser browser) {
-
         switch (browser) {
             case Chrome:
                 ChromeOptions options = new ChromeOptions();
@@ -129,41 +161,19 @@ public abstract class SeleniumTest extends Test {
         return new DesiredCapabilities();
     }
 
-    private static WebDriver prepBrowser(Browser browser) {
-        switch (browser) {
-            case Chrome:
-                ChromeOptions options = new ChromeOptions();
-                options.addArguments("disable-infobars");
-                return new ChromeDriver(options);
-            case IE:
-                return new InternetExplorerDriver();
-            case Safari:
-                return new SafariDriver();
-            case Firefox:
-                DesiredCapabilities caps = DesiredCapabilities.firefox();
-                LoggingPreferences pref = new LoggingPreferences();
-                pref.enable(LogType.BROWSER, Level.OFF);
-                pref.enable(LogType.CLIENT, Level.OFF);
-                pref.enable(LogType.DRIVER, Level.OFF);
-                pref.enable(LogType.PERFORMANCE, Level.OFF);
-                pref.enable(LogType.PROFILER, Level.OFF);
-                pref.enable(LogType.SERVER, Level.OFF);
-                caps.setCapability(CapabilityType.LOGGING_PREFS, pref);
-                FirefoxDriver driver = new FirefoxDriver(caps);
-                return driver;
-            default:
-                return null;
-        }
+    private static void writeCapabilities() {
+        DesiredCapabilities caps = new DesiredCapabilities("safari", "", Platform.ANY);
+        caps.setCapability("platformName", "iOS");
+        caps.setCapability("manufacturer", "Apple");
+        caps.setCapability("model", "iPhone-5S");
+        writeCapabilities(caps, new File("caps.json"));
     }
 
-    private static void writeCapabilities() {
+    public static void writeCapabilities(DesiredCapabilities caps, File destination) {
+        ObjectMapper mapper = new ObjectMapper();
+
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            DesiredCapabilities caps = new DesiredCapabilities("safari", "", Platform.ANY);
-            caps.setCapability("platformName", "iOS");
-            caps.setCapability("manufacturer", "Apple");
-            caps.setCapability("model", "iPhone-5S");
-            mapper.writeValue(new File("caps.json"), caps.asMap());
+            mapper.writeValue(destination, caps.asMap());
         } catch (IOException e) {
             e.printStackTrace();
         }

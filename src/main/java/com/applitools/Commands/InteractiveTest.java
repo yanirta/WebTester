@@ -21,7 +21,7 @@ public class InteractiveTest extends ApplitoolsTest {
     @Override
     public void ValidateParams() {
         super.ValidateParams();
-        Validator.givenBoolean(singleTest, "Single test (-st)")
+        Validator.given(singleTest, "Single test (-st)")
                 .falseThen().required(batchName, "Batch name (-ba)")
                 .trueThen().required(testName, "Test name (-tn)");
     }

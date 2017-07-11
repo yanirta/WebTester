@@ -76,6 +76,7 @@ IE, 100 pixels from the top will be given as `-ct 100,0,0,0`
 + `-sb` - Show scrollbars, in some cases will capture the scrollbars as part of the screenshot
 + `-wb [seconds]` - Set wait before screenshot, will put sleep between scrolling and taking segment screenshot
 + `-cf [path]` - Custom desired capabilities file
++ `-sr [numeric-ratio]` - Overrides automatic ratio for troubleshooting and special cases.
 
 ## Other use cases
 
@@ -84,7 +85,7 @@ IE, 100 pixels from the top will be given as `-ct 100,0,0,0`
  > Java -jar Web-Tester.jar Iterate -k [API-KEY] -lo https://applitools.com/sitemap.xml
  -cf iphone7_sauce.json -se <http://USERNAME:ACCESSKEY@ondemand.saucelabs.com:80/wd/hub> -ct 65:0:0:0
 
-provided that 'iphone7_sauce.json' content is:
+provided that the content of 'iphone7_sauce.json' is:
 ```javascript
 {
     "deviceName": "iPhone 7 Simulator",
@@ -95,7 +96,25 @@ provided that 'iphone7_sauce.json' content is:
 ```
 Note: passing `-ct 65:0:0:0` argument will avoid 65 pixels from the top of the screen which are the status and the address bar of iPhone.
 
-### Executing custom code before validations
+### Running Chrome emulation - Emulated devices in Desktop chrome
+ >  Java -jar Web-Tester.jar Single -k [API-KEY] -pu http://www.asos.com/ 
+ -br Chrome -cf mobile_emulation.json -sr 1"
+ 
+ provided that the content of 'mobile_emulation.json' is:
+ ```Javascript
+ {
+   "browserName": "chrome",
+   "chromeOptions": {
+     "mobileEmulation": {
+       "deviceName": "Google Nexus 5"
+     }
+   },
+   "version": "",
+   "platform": "ANY"
+ }
+ ```
+ 
+### Performing custom JavaScript code before validations
 The WebTester supports execution of custom JavaScript code before every checkpoint.  
 The tool expects for a file named 'execute_before_step.js' to be found in the execution folder.  
 The file can contain any JavaScript syntax supported by the client web-page.  

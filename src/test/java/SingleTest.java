@@ -1,4 +1,11 @@
+import com.applitools.Commands.SeleniumTest;
 import org.junit.Test;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SingleTest extends CmdTest {
     @Test
@@ -21,8 +28,31 @@ public class SingleTest extends CmdTest {
         simpleBrowserFullParamsTest("SingleTestApp", "Chrome", "Layout2", "1000x700", "SingleTestBatch");
     }
 
+    @Test
+    public void TestLocalCapabilitiesChrome() {
+        Map<String, String> mobileEmulation = new HashMap<String, String>();
+        mobileEmulation.put("deviceName", "Google Nexus 5");
+
+        Map<String, Object> chromeOptions = new HashMap<String, Object>();
+        chromeOptions.put("mobileEmulation", mobileEmulation);
+
+        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+        capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+
+        SeleniumTest.writeCapabilities(capabilities, new File("emulated_device.json"));
+
+        execute(String.format("Single -k %s -br %s -ba %s -cf %s -pu %s -sr %s",
+                System.getenv("API_KEY"),
+                "Chrome",
+                "LocalCaps",
+                "emulated_device.json",
+                "http://www.asos.com/",
+                "1"
+        ));
+    }
+
     private void simpleBrowserFullParamsTest(String appname, String browser, String matchlevel, String viewportsize, String batchname) {
-        run(String.format("-an %s -br %s -ml %s -vs %s -ba %s", appname, browser, matchlevel, viewportsize, batchname));
+        execute(String.format("-an %s -br %s -ml %s -vs %s -ba %s", appname, browser, matchlevel, viewportsize, batchname));
     }
 
     private void simpleBrowserTest(String browser) {

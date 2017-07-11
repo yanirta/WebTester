@@ -95,11 +95,11 @@ public abstract class Validator {
         }
     }
 
-    public static BooleanPrecondition givenBoolean(boolean param, String paramName) {
+    public static BooleanPrecondition given(boolean param, String paramName) {
         return new BooleanPrecondition(param, paramName);
     }
 
-    public static StringPrecondition givenString(String param, String paramName) {
+    public static StringPrecondition given(String param, String paramName) {
         return new StringPrecondition(param, paramName);
     }
 }
