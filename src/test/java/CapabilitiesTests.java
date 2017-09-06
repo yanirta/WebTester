@@ -22,6 +22,18 @@ public class CapabilitiesTests {
         DesiredCapabilities capabilities = DesiredCapabilities.chrome();
         capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 
-        SeleniumTest.writeCapabilities(capabilities, new File("emulated_device.json"));
+        SeleniumTest.writeCapabilities(capabilities, new File("sl_real_device.json"));
+    }
+
+    @Test
+    public void chromeOptionsToFile(){
+        ChromeOptions options = new ChromeOptions();
+        options.setExperimentalOption("useAutomationExtension", false);
+        //options.addArguments("headless");
+        options.addArguments("debug-devtools");
+        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+        capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+
+        SeleniumTest.writeCapabilities(capabilities, new File("chrome_options.json"));
     }
 }

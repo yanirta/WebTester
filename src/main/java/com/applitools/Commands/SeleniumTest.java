@@ -24,8 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -90,11 +91,7 @@ public abstract class SeleniumTest extends Test {
         Browser safeBrowser = getSafeBrowser(browser);
         switch (safeBrowser) {
             case Chrome:
-                HashMap options = (HashMap) caps.getCapability(ChromeOptions.CAPABILITY);
-                options = (options == null) ? new HashMap() : options;
-                options.put("args", Arrays.asList(new String[]{"disable-infobars"}));
-                caps.setCapability(ChromeOptions.CAPABILITY, options);
-                caps.merge(caps);
+                enhanceChromeCaps(caps); //In case the capabilities were read from cap file, we still might need adding some stability capabilities
                 return new ChromeDriver(caps);
             case IE:
                 return new InternetExplorerDriver(caps);
@@ -146,11 +143,9 @@ public abstract class SeleniumTest extends Test {
     private static DesiredCapabilities prepareCaps(Browser browser) {
         switch (browser) {
             case Chrome:
-                ChromeOptions options = new ChromeOptions();
-                options.addArguments("disable-infobars");
-                DesiredCapabilities ds = DesiredCapabilities.chrome();
-                ds.setCapability(ChromeOptions.CAPABILITY, options);
-                return ds;
+                DesiredCapabilities caps = DesiredCapabilities.chrome();
+                enhanceChromeCaps(caps);
+                return caps;
             case IE:
                 return DesiredCapabilities.internetExplorer();
             case Safari:
@@ -159,6 +154,16 @@ public abstract class SeleniumTest extends Test {
                 return DesiredCapabilities.firefox();
         }
         return new DesiredCapabilities();
+    }
+
+    private static void enhanceChromeCaps(DesiredCapabilities caps) {
+        if (null == caps.getCapability(ChromeOptions.CAPABILITY)) caps.setCapability(ChromeOptions.CAPABILITY, new LinkedHashMap());
+        LinkedHashMap options = (LinkedHashMap) caps.getCapability(ChromeOptions.CAPABILITY);
+
+        if (!options.containsKey("args")) options.put("args", new ArrayList<String>());
+        ArrayList<String> args = (ArrayList<String>) options.get("args");
+
+        if (!args.contains("disable-infobars")) args.add("disable-infobars");
     }
 
     private static void writeCapabilities() {
@@ -171,6 +176,8 @@ public abstract class SeleniumTest extends Test {
 
     public static void writeCapabilities(DesiredCapabilities caps, File destination) {
         ObjectMapper mapper = new ObjectMapper();
+        //mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
 
         try {
             mapper.writeValue(destination, caps.asMap());

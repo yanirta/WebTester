@@ -5,6 +5,7 @@ import com.applitools.eyes.TestResults;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.base.Strings;
+import org.openqa.selenium.WebDriverException;
 
 @Parameters(commandDescription = "Perform validation on a single page")
 public class SinglePageTest extends ApplitoolsTest {
@@ -18,12 +19,19 @@ public class SinglePageTest extends ApplitoolsTest {
     @Override
     public void ValidateParams() {
         super.ValidateParams();
-        Validator.givenString(testName, "Test name (-tn)").isNotSetThen()
+        Validator.given(testName, "Test name (-tn)")
+                .isNotSetThen()
                 .required(pageURL, "Page url (-pu)");
     }
 
     public void Execute() {
-        if (!Strings.isNullOrEmpty(pageURL)) driver_.get(pageURL);
+        if (!Strings.isNullOrEmpty(pageURL))
+            try {
+                driver_.get(pageURL);
+            } catch (WebDriverException e) {
+                System.out.printf("Exception caught %s", e.getCause());
+                e.printStackTrace();
+            }
         if (Strings.isNullOrEmpty(testName)) testName = pageURL;
 
         eyesOpen(testName);

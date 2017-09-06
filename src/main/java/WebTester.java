@@ -8,12 +8,6 @@ import java.util.logging.Logger;
 public class WebTester {
 
     public static void main(String[] args) {
-//        Logger.getLogger("geckodriver").setLevel(Level.OFF);
-//        Logger.getLogger("mozprofile::profile").setLevel(Level.OFF);
-//        Logger.getLogger("geckodriver::marionette").setLevel(Level.OFF);
-//        Logger.getLogger("Marionette").setLevel(Level.OFF);
-//        Logger.getLogger("org.openqa.selenium.remote.ProtocolHandshake").setLevel(Level.OFF);
-
         JCommander jc = new JCommander();
         jc.setProgramName("WebTester");
         jc.setColumnSize(200);

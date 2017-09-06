@@ -16,7 +16,7 @@ import java.net.URISyntaxException;
 import java.security.InvalidParameterException;
 
 public abstract class ApplitoolsTest extends SeleniumTest {
-    private static final String CURR_VERSION = "0.0.8";
+    private static final String CURR_VERSION = "0.1.0";
     //Api-key
     @Parameter(names = {"-k", "--apiKey"}, description = "Applitools api key", required = true)
     protected String apiKey;
@@ -63,7 +63,7 @@ public abstract class ApplitoolsTest extends SeleniumTest {
 
     //Hide scrollbars
     @Parameter(names = {"-sb", "--showScrollbars"}, description = "Set to show scrollbars before screenshot")
-    protected boolean showScrollbars = true;
+    protected boolean showScrollbars = false;
 
     //Wait before screenshots
     @Parameter(names = {"-wb", "--wait"}, description = "Set wait in seconds between screenshots sections")
