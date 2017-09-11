@@ -13,13 +13,13 @@ The tool supports three general modes:
 
 To run in each one of the mode see the following sections.
 Note that the Web-Tester was built in Java so every cli command should start with
->Java -jar Web-Tester.jar [mode] [mode specific parametes...]
+>Java -jar WebTester.jar [mode] [mode specific parametes...]
 
 ## 1. Runnig Single mode
 Made to easily validate single url without user intervention.
 
 For example:
-> Java -jar Web-Tester.jar -k [API_KEY] -pu https://applitools.com/resources
+> Java -jar WebTester.jar -k [API_KEY] -pu https://applitools.com/resources
 
 + Required parametes:
     + `-k [api-key]` , Applitools api key
@@ -37,7 +37,7 @@ Applitools at any point to visually validate the page currently displayed.
 The tool will continue to prompt for the next screens until the exit character ('~')
 is inserted.
 
-> Java -jar Web-Tester.jar Interactive -k [API_KEY] -bn MyBatch
+> Java -jar WebTester.jar Interactive -k [API_KEY] -bn MyBatch
 
 + Required parametes:
     + `-k [api-key]` , Applitools api key
@@ -50,7 +50,7 @@ is inserted.
 ## 3. Running Iterative mode
 Iterates over a defined set of urls automatically
 
-> Java -jar Web-Tester.jar Iterate -k [API-KEY] -lo https://applitools.com/sitemap.xml
+> Java -jar WebTester.jar Iterate -k [API-KEY] -lo https://applitools.com/sitemap.xml
 
 + Required parametes:
     + `-k [api-key]` , Applitools api key
@@ -82,7 +82,7 @@ IE, 100 pixels from the top will be given as `-ct 100,0,0,0`
 
 ### Running Appium iOS mobile iterative test on Saucelabs
 
- > Java -jar Web-Tester.jar Iterate -k [API-KEY] -lo https://applitools.com/sitemap.xml
+ > Java -jar WebTester.jar Iterate -k [API-KEY] -lo https://applitools.com/sitemap.xml
  -cf iphone7_sauce.json -se <http://USERNAME:ACCESSKEY@ondemand.saucelabs.com:80/wd/hub> -ct 65:0:0:0
 
 provided that the content of 'iphone7_sauce.json' is:
@@ -97,7 +97,7 @@ provided that the content of 'iphone7_sauce.json' is:
 Note: passing `-ct 65:0:0:0` argument will avoid 65 pixels from the top of the screen which are the status and the address bar of iPhone.
 
 ### Running Chrome emulation - Emulated devices in Desktop chrome
- >  Java -jar Web-Tester.jar Single -k [API-KEY] -pu http://www.asos.com/ 
+ >  Java -jar WebTester.jar Single -k [API-KEY] -pu http://www.asos.com/ 
  -br Chrome -cf mobile_emulation.json -sr 1"
  
  provided that the content of 'mobile_emulation.json' is:
@@ -121,3 +121,14 @@ The file can contain any JavaScript syntax supported by the client web-page.
 
 Note that in most of the cases the logic will have to wait for elements to load before actually invoking the
  actions on them.
+ 
+## Prerequisites
+The integration with the different browsers is based on Selenium. To support local executions, the apropriate "driver"
+should be unzipped and placed on the same folder of EyesUtilities.jar or to be installed put in the PATH variable.
+
++ [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
++ [GeckoDriver](https://github.com/mozilla/geckodriver/releases) - Firefox driver
++ [IE Driver](https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver) - Follow the instructions to download only iedriverserver from the selenium repository.
+ 
+ 
+ 
