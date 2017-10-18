@@ -16,7 +16,7 @@ import java.net.URISyntaxException;
 import java.security.InvalidParameterException;
 
 public abstract class ApplitoolsTest extends SeleniumTest {
-    private static final String CURR_VERSION = "0.1.0";
+    private static final String CURR_VERSION = "0.1.1";
     //Api-key
     @Parameter(names = {"-k", "--apiKey"}, description = "Applitools api key", required = true)
     protected String apiKey;

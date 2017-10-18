@@ -6,6 +6,7 @@ import com.applitools.eyes.TestResults;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -73,7 +74,11 @@ public class IterativeTest extends ApplitoolsTest {
         for (URI page : pages_) {
             String currAppName = (Strings.isNullOrEmpty(appName))
                     ? (page.getHost() != null ? page.getHost() : "WebTester") : appName;
-            String testName = Strings.isNullOrEmpty(page.getPath()) ? "/" : page.getPath();
+            String path = Strings.nullToEmpty(page.getPath());
+            String fragment = Strings.isNullOrEmpty(page.getFragment()) ? "" : "#" + page.getFragment();
+            String testName = path + fragment;
+            if (Strings.isNullOrEmpty(testName)) testName = "/";
+
 
             eyesOpen(currAppName, testName);
             driver_.get(page.toString());
@@ -81,7 +86,8 @@ public class IterativeTest extends ApplitoolsTest {
 
             TestResults result = eyes_.close(false);
             ++i;
-            printResult(result, testName, i, total);
+
+            proccessTestgResults(result, testName, i, total);
 
             if (result.isNew()) ++newtests;
             else if (!result.isPassed()) ++failedtests;
@@ -90,7 +96,11 @@ public class IterativeTest extends ApplitoolsTest {
         System.out.format("Test ended, Total Steps - %s, %s-Passed, %s-Failed, %s-New \n\n",
                 total, total - newtests - failedtests, failedtests, newtests);
         //TODO print batch url
-        //TODO exit process with state
+    }
+
+    private void proccessTestgResults(TestResults result, String testName, int i, int total) {
+        printResult(result, testName, i, total);
+        if (!result.isPassed()) increaseExitCode();
     }
 
     private void printResult(TestResults result, String testName, int i, int total) {

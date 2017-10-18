@@ -2,9 +2,6 @@ import com.applitools.Commands.*;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public class WebTester {
 
     public static void main(String[] args) {
@@ -34,5 +31,6 @@ public class WebTester {
 
         ITest test = (ITest) jc.getCommands().get(jc.getParsedCommand()).getObjects().get(0);
         test.Run();
+        test.exitWithCode();
     }
 }

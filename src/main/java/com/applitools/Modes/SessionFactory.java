@@ -14,7 +14,7 @@ public class SessionFactory {
 //
 //        if (args.length == 0) {
 //            PrintGeneralHelp();
-//            System.exit(-1);
+//            System.exitWithCode(-1);
 //            return null;
 //        }
 //
@@ -24,7 +24,7 @@ public class SessionFactory {
 //        } catch (ParseException e) {
 //            //e.printStackTrace();
 //            PrintGeneralHelp();
-//            System.exit(-1);
+//            System.exitWithCode(-1);
 //            return null;
 //        }
 //

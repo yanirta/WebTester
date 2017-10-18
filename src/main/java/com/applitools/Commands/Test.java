@@ -21,6 +21,7 @@ public abstract class Test implements ITest {
     private static final String JS_EXECUTE_AFTER_STEP_FILENAME = "execute_after_step.js"; //TODO
 
     private String execute_before_step_js_ = null;
+    private int exitcode = 0;
 
     public final void Run() {
         try {
@@ -88,5 +89,13 @@ public abstract class Test implements ITest {
     private void printException(Exception e) {
         System.out.printf("Error: %s", e.getMessage());
         e.printStackTrace();
+    }
+
+    public void increaseExitCode() {
+        exitcode++;
+    }
+
+    public void exitWithCode() {
+        System.exit(exitcode);
     }
 }
