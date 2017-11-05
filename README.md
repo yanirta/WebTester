@@ -1,4 +1,4 @@
-# Web-Tester   [ ![Download](https://api.bintray.com/packages/yanirta/generic/WebTester/images/download.svg) ](https://bintray.com/yanirta/generic/download_file?file_path=Webtester.jar)
+# Web-Tester   [ ![Download](https://api.bintray.com/packages/yanirta/generic/WebTester/images/download.svg) ](https://bintray.com/yanirta/generic/download_file?file_path=WebTester_0.1.2.jar)
 Web-Tester is a Cli standalone tool to perform visual validation tests using Selenium and Applitools without coding.
 
 If you don't have your Applitools account yet,
