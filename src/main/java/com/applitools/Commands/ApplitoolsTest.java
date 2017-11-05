@@ -46,8 +46,8 @@ public abstract class ApplitoolsTest extends SeleniumTest {
     protected String baselineEnvName;
 
     //Proxy
-    @Parameter(names = {"-px, --proxy"}, description = "Set proxy for Applitools communication")
-    protected String proxyURL;
+    @Parameter(names = {"-px", "--proxy"}, description = "Set proxy for Applitools communication")
+    protected String proxyUrl;
 
     //Cut provider
     @Parameter(names = {"-ct", "--cut"}, description = "Specify cut-out border around the original screenshot, tob:bottom:left:right, ie: 50:0:0:0")
@@ -94,7 +94,7 @@ public abstract class ApplitoolsTest extends SeleniumTest {
         eyes_.setHideScrollbars(!showScrollbars);
 
         if (!Strings.isNullOrEmpty(serverUrl)) eyes_.setServerUrl(new URI(serverUrl));
-        if (!Strings.isNullOrEmpty(proxyURL)) eyes_.setProxy(new ProxySettings(proxyURL));
+        if (!Strings.isNullOrEmpty(proxyUrl)) eyes_.setProxy(new ProxySettings(proxyUrl));
         if (!Strings.isNullOrEmpty(baselineEnvName)) eyes_.setBaselineEnvName(baselineEnvName);
         if (!Strings.isNullOrEmpty(scaleRatio)) eyes_.setScaleRatio(Double.parseDouble(scaleRatio));
         if (waitBeforeScreenshot > 0) eyes_.setWaitBeforeScreenshots(waitBeforeScreenshot * 1000);
