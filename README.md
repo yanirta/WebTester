@@ -69,7 +69,7 @@ Iterates over a defined set of urls automatically
 + `-an [name]` - Application name
 + `-bn [name]` - Baseline environment name
 + `-ct [tob:bottom:left:right]` - Cut provider, avoid the specified amount of pixels from the bound of the screen.
-IE, 100 pixels from the top will be given as `-ct 100,0,0,0`
+IE, 100 pixels from the top will be given as `-ct 100:0:0:0`
 + `-as [url]` - Applitools server url
 + `-df` - Disable full page screenshot, will capture only the visible area of the page
 + `-us` - Use alternative method of scrolling when taking the screenshot
@@ -77,7 +77,8 @@ IE, 100 pixels from the top will be given as `-ct 100,0,0,0`
 + `-wb [seconds]` - Set wait before screenshot, will put sleep between scrolling and taking segment screenshot
 + `-cf [path]` - Custom desired capabilities file
 + `-sr [numeric-ratio]` - Overrides automatic ratio for troubleshooting and special cases.
-
++ `-iw [seconds]` - Specify custom implicit-wait for Seleium
++ `-lw [seconds]` - Specify custom page load timeout or Selenium
 ## Other use cases
 
 ### Running Appium iOS mobile iterative test on Saucelabs

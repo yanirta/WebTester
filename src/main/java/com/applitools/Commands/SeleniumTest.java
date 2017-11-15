@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public abstract class SeleniumTest extends Test {
@@ -45,6 +46,12 @@ public abstract class SeleniumTest extends Test {
     //Caps file
     @Parameter(names = {"-cf", "--capsFile"}, description = "Specify capabilities json file")
     protected String capsFile;
+
+    @Parameter(names = {"-iw", "--implicitWait"}, description = "Specify implicit wait in seconds for selenium")
+    protected long implicitWait = -1;
+
+    @Parameter(names = {"-lw", "--loadWait"}, description = "Specify page load wait in seconds for selenium")
+    protected long pageloadTimeout = -1;
 
     //Session id to attach
     @Parameter(names = {"-id", "--sessionId"}, description = "Selenium session-id to attach the test", hidden = true)
@@ -76,15 +83,21 @@ public abstract class SeleniumTest extends Test {
     }
 
     protected WebDriver InitDriver(String sessionId, String browser, String serverUrl, DesiredCapabilities caps) throws IOException {
+        WebDriver driver = null;
         if (!Strings.isNullOrEmpty(sessionId)) {
             URL seleniumServer = new URL(Strings.isNullOrEmpty(serverUrl) ? DEFAULT_SERVER : serverUrl);
-            return new AttachedWebDriver(seleniumServer, sessionId);
-        }
+            driver = new AttachedWebDriver(seleniumServer, sessionId);
+        } else if (!Strings.isNullOrEmpty(serverUrl))
+            driver = prepRemoteDriver(new URL(serverUrl), caps);
+        else
+            driver = prepLocalDriver(browser, caps);
 
-        if (!Strings.isNullOrEmpty(serverUrl))
-            return prepRemoteDriver(new URL(serverUrl), caps);
+        if (implicitWait > 0)
+            driver.manage().timeouts().implicitlyWait(implicitWait, TimeUnit.SECONDS);
+        if (pageloadTimeout > 0)
+            driver.manage().timeouts().pageLoadTimeout(pageloadTimeout, TimeUnit.SECONDS);
 
-        return prepLocalDriver(browser, caps);
+        return driver;
     }
 
     protected WebDriver prepLocalDriver(String browser, DesiredCapabilities caps) {
@@ -157,7 +170,8 @@ public abstract class SeleniumTest extends Test {
     }
 
     private static void enhanceChromeCaps(DesiredCapabilities caps) {
-        if (null == caps.getCapability(ChromeOptions.CAPABILITY)) caps.setCapability(ChromeOptions.CAPABILITY, new LinkedHashMap());
+        if (null == caps.getCapability(ChromeOptions.CAPABILITY))
+            caps.setCapability(ChromeOptions.CAPABILITY, new LinkedHashMap());
         LinkedHashMap options = (LinkedHashMap) caps.getCapability(ChromeOptions.CAPABILITY);
 
         if (!options.containsKey("args")) options.put("args", new ArrayList<String>());

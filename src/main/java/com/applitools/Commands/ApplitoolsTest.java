@@ -16,7 +16,7 @@ import java.net.URISyntaxException;
 import java.security.InvalidParameterException;
 
 public abstract class ApplitoolsTest extends SeleniumTest {
-    private static final String CURR_VERSION = "0.1.1";
+
     //Api-key
     @Parameter(names = {"-k", "--apiKey"}, description = "Applitools api key", required = true)
     protected String apiKey;
@@ -80,7 +80,7 @@ public abstract class ApplitoolsTest extends SeleniumTest {
 
     public void Init() throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
         super.Init();
-
+//TODO check System.setProperty("java.net.useSystemProxies", "true");
         eyes_ = new Eyes() {
             @Override
             public String getBaseAgentId() {
@@ -128,7 +128,7 @@ public abstract class ApplitoolsTest extends SeleniumTest {
         if (!Strings.isNullOrEmpty(cutProvider)) {
             String[] cuts = cutProvider.split(":");
             if (cuts.length != 4)
-                throw new InvalidParameterException("Cut parameter (-cut) incorrect, should be in format Top:Bottom:Left,Right");
+                throw new InvalidParameterException("Cut parameter (-cut) incorrect, should be in format Top:Bottom:Left:Right");
             eyes_.setImageCut(
                     new FixedCutProvider(
                             Integer.parseInt(cuts[0]),
