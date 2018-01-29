@@ -42,7 +42,7 @@ is inserted.
 + Required parametes:
     + `-k [api-key]` , Applitools api key
     + `-st` , Use single test for all on-demand steps
-    + `-bn [name]` , Batch name to aggregate all the tests
+    + `-ba [name]` , Batch name to aggregate all the tests
 + Optional parameters:
     + `-tn [name]` , Test name, if `-st` is set
     + More optional parameters can be found in "[Shared parameters in all modes](#shared-parameters-in-all-modes)" section
