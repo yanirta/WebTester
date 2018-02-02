@@ -59,10 +59,10 @@ Iterates over a defined set of urls automatically
 + Optional parameters:
     + More optional parameters can be found in "[Shared parameters in all modes](#shared-parameters-in-all-modes)" section
 
-## Shared parameters in all modes
+## Parameters applicable in all modes
 + `-br [browser]` - Set the browser to be used
 + `-vs [width x height]` - View port size to be achieved before validation
-+ `-ba [name]` - Batch name
++ `-ba [name]` - Batch name (To override automatic assignment of batch-id, use name:id when id is any unique string)
 + `-px [url]` - Proxy url for Applitools communication, for example: http://proxy.myorg.com:8080
 + `-ml [match-level]` - Match level, one of Strict, Layout, Layout2 or Content. Default: Strict
 + `-se [url]` - Selenium server/grid url

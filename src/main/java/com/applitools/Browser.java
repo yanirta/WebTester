@@ -2,7 +2,8 @@ package com.applitools;
 
 public enum Browser {
     Chrome,
-    IE,
+    Ie,
+    Internetexplorer,
     Safari,
     Firefox,
 }

@@ -14,9 +14,11 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.safari.SafariOptions;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -105,13 +107,18 @@ public abstract class SeleniumTest extends Test {
         switch (safeBrowser) {
             case Chrome:
                 enhanceChromeCaps(caps); //In case the capabilities were read from cap file, we still might need adding some stability capabilities
-                return new ChromeDriver(caps);
-            case IE:
-                return new InternetExplorerDriver(caps);
+                ChromeOptions co = new ChromeOptions();
+                co.merge(caps);
+                return new ChromeDriver(co);
+            case Internetexplorer:
+            case Ie:
+                InternetExplorerOptions ioo = new InternetExplorerOptions(caps);
+                return new InternetExplorerDriver(ioo);
             case Safari:
-                return new SafariDriver(caps);
+                SafariOptions so = new SafariOptions(caps);
+                return new SafariDriver(so);
             case Firefox:
-                FirefoxDriver driver = new FirefoxDriver(caps);
+                FirefoxDriver driver = new FirefoxDriver();
                 driver.setLogLevel(Level.OFF);
                 return driver;
             default:
@@ -159,7 +166,8 @@ public abstract class SeleniumTest extends Test {
                 DesiredCapabilities caps = DesiredCapabilities.chrome();
                 enhanceChromeCaps(caps);
                 return caps;
-            case IE:
+            case Internetexplorer:
+            case Ie:
                 return DesiredCapabilities.internetExplorer();
             case Safari:
                 return DesiredCapabilities.safari();
