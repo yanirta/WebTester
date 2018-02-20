@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.sun.xml.internal.ws.util.StringUtils;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -26,10 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -84,7 +82,7 @@ public abstract class SeleniumTest extends Test {
         driver_ = InitDriver(sessionId, browser, seleniumServerURL, prepareCapabilities());
     }
 
-    protected WebDriver InitDriver(String sessionId, String browser, String serverUrl, DesiredCapabilities caps) throws IOException {
+    protected WebDriver InitDriver(String sessionId, String browser, String serverUrl, MutableCapabilities caps) throws IOException {
         WebDriver driver = null;
         if (!Strings.isNullOrEmpty(sessionId)) {
             URL seleniumServer = new URL(Strings.isNullOrEmpty(serverUrl) ? DEFAULT_SERVER : serverUrl);
@@ -102,14 +100,12 @@ public abstract class SeleniumTest extends Test {
         return driver;
     }
 
-    protected WebDriver prepLocalDriver(String browser, DesiredCapabilities caps) {
+    protected WebDriver prepLocalDriver(String browser, MutableCapabilities caps) {
         Browser safeBrowser = getSafeBrowser(browser);
         switch (safeBrowser) {
             case Chrome:
-                enhanceChromeCaps(caps); //In case the capabilities were read from cap file, we still might need adding some stability capabilities
-                ChromeOptions co = new ChromeOptions();
-                co.merge(caps);
-                return new ChromeDriver(co);
+                ChromeOptions options = enhanceChromeCaps(caps); //In case the capabilities were read from cap file, we still might need adding some stability capabilities
+                return new ChromeDriver(options);
             case Internetexplorer:
             case Ie:
                 InternetExplorerOptions ioo = new InternetExplorerOptions(caps);
@@ -126,21 +122,22 @@ public abstract class SeleniumTest extends Test {
         }
     }
 
-    protected WebDriver prepRemoteDriver(URL serverUrl, DesiredCapabilities caps) {
+    protected WebDriver prepRemoteDriver(URL serverUrl, MutableCapabilities caps) {
         return new RemoteWebDriver(serverUrl, caps);
     }
 
-    private DesiredCapabilities prepareCapabilities() throws IOException {
+    private MutableCapabilities prepareCapabilities() throws IOException {
+        Browser browser = getSafeBrowser(this.browser);
+
         if (!Strings.isNullOrEmpty(capsFile))
             return readCapabilities(capsFile);
         else
-            return prepareCaps(getSafeBrowser(browser));
+            return prepareCaps(browser);
     }
 
-    private static DesiredCapabilities readCapabilities(String capsfile) throws IOException {
+    private static MutableCapabilities readCapabilities(String capsfile) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-
-        return new DesiredCapabilities(
+        return new MutableCapabilities(
                 (Map<String, ?>) mapper.readValue(
                         new File(capsfile),
                         new TypeReference<Map<String, Object>>() {
@@ -154,10 +151,6 @@ public abstract class SeleniumTest extends Test {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Wrong browser argument");
         }
-    }
-
-    private static WebDriver prepBrowser(URL server, DesiredCapabilities caps) {
-        return new RemoteWebDriver(server, caps);
     }
 
     private static DesiredCapabilities prepareCaps(Browser browser) {
@@ -177,15 +170,20 @@ public abstract class SeleniumTest extends Test {
         return new DesiredCapabilities();
     }
 
-    private static void enhanceChromeCaps(DesiredCapabilities caps) {
-        if (null == caps.getCapability(ChromeOptions.CAPABILITY))
-            caps.setCapability(ChromeOptions.CAPABILITY, new LinkedHashMap());
-        LinkedHashMap options = (LinkedHashMap) caps.getCapability(ChromeOptions.CAPABILITY);
+    private static ChromeOptions enhanceChromeCaps(MutableCapabilities caps) {
+        ChromeOptions options = new ChromeOptions();
+        options.merge(caps);
 
-        if (!options.containsKey("args")) options.put("args", new ArrayList<String>());
-        ArrayList<String> args = (ArrayList<String>) options.get("args");
-
-        if (!args.contains("disable-infobars")) args.add("disable-infobars");
+        if (options.getCapability(ChromeOptions.CAPABILITY) != null) {
+            HashMap chromeOptions = (HashMap) options.getCapability(ChromeOptions.CAPABILITY);
+            if (chromeOptions.get("mobileEmulation") != null)
+                options.setExperimentalOption("mobileEmulation", chromeOptions.get("mobileEmulation"));
+            if (chromeOptions.get("args") != null)
+                options.addArguments((List<String>) chromeOptions.get("args"));
+            if (chromeOptions.get("extensions") != null)
+                options.addExtensions((List<File>) chromeOptions.get("extensions"));
+        }
+        return options;
     }
 
     private static void writeCapabilities() {
@@ -196,10 +194,9 @@ public abstract class SeleniumTest extends Test {
         writeCapabilities(caps, new File("caps.json"));
     }
 
-    public static void writeCapabilities(DesiredCapabilities caps, File destination) {
+    public static void writeCapabilities(MutableCapabilities caps, File destination) {
         ObjectMapper mapper = new ObjectMapper();
         //mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-
 
         try {
             mapper.writeValue(destination, caps.asMap());
