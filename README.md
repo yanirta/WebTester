@@ -10,12 +10,13 @@ The tool supports three general modes:
 1. Single - Validate single page based on provided url.
 2. Interactive - Opens browser session to validated on demand, what's currently displayed.
 3. Iterative - Automatically validate list of urls provided in sitemap.xml format.
+4. Passive - Hooks on existing selenium session and performs single validation on current page.
 
 To run in each one of the mode see the following sections.
 Note that the Web-Tester was built in Java so every cli command should start with
 >Java -jar WebTester.jar [mode] [mode specific parametes...]
 
-## 1. Runnig Single mode
+## 1. Single mode
 Made to easily validate single url without user intervention.
 
 For example:
@@ -26,9 +27,10 @@ For example:
     + `-pu [url]` , Page url to validate
 + Optional paramaeters:
     + `-tn [name]`, Test name, otherwise will be derived from page-url
+    + `-id [Session-id]` , Selenium session id to connect to. To hook on existing selenium session instead of starting a new one.
     + More optional parameters can be found in "[Shared parameters in all modes](#shared-parameters-in-all-modes)" section
 
-##  2. Running Interactive mode
+##  2. Interactive mode
 Provides on demand method to validate screenshot while performing manual testing.
 Once executed, the tool will open the browser and wait for test/step name from the user,
 which will trigger a visual validation of what's currently displayed.
@@ -41,13 +43,14 @@ is inserted.
 
 + Required parametes:
     + `-k [api-key]` , Applitools api key
-    + `-st` , Use single test for all on-demand steps
     + `-ba [name]` , Batch name to aggregate all the tests
+    + `-st` , Use single test for all on-demand steps
 + Optional parameters:
     + `-tn [name]` , Test name, if `-st` is set
+    + `-id [Session-id]` , Selenium session id to connect to. To hook on existing selenium session instead of starting a new one.
     + More optional parameters can be found in "[Shared parameters in all modes](#shared-parameters-in-all-modes)" section
 
-## 3. Running Iterative mode
+## 3. Iterative mode
 Iterates over a defined set of urls automatically
 
 > Java -jar WebTester.jar Iterate -k [API-KEY] -lo https://applitools.com/sitemap.xml
@@ -57,7 +60,21 @@ Iterates over a defined set of urls automatically
     + `-lo [url]` , The url to sitemap.xml file.
     Note that local path can be specified using the following syntax: file:///Users/yanir/mySitemaps/sitemap.xml
 + Optional parameters:
+    + `-id [Session-id]` , Selenium session id to connect to. To hook on existing selenium session instead of starting a new one.
     + More optional parameters can be found in "[Shared parameters in all modes](#shared-parameters-in-all-modes)" section
+
+## 4. Passive mode
+Assumed that selenium session is already started elsewhere, this mode can hook on an existing session and perform
+validation on the current page of the browser.
+
+>Java -jar WebTester.jar Passive -k [API-KEY] -id [Selenium-Session-Id]
+
++ Required parametes:
+    + `-k [api-key]` , Applitools api key
+    + `-id [Session-id]` , To hook on existing selenium session instead of starting a new one.
++ Optional parameters:
+    + `-tn [name]` , Test name, default: page address
+    
 
 ## Parameters applicable in all modes
 + `-br [browser]` - Set the browser to be used
@@ -79,6 +96,9 @@ IE, 100 pixels from the top will be given as `-ct 100:0:0:0`
 + `-sr [numeric-ratio]` - Overrides automatic ratio for troubleshooting and special cases.
 + `-iw [seconds]` - Specify custom implicit-wait for Seleium
 + `-lw [seconds]` - Specify custom page load timeout or Selenium
+
+
+
 ## Other use cases
 
 ### Running Appium iOS mobile iterative test on Saucelabs
