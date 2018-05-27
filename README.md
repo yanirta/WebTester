@@ -39,7 +39,7 @@ Applitools at any point to visually validate the page currently displayed.
 The tool will continue to prompt for the next screens until the exit character ('~')
 is inserted.
 
-> Java -jar WebTester.jar Interactive -k [API_KEY] -bn MyBatch
+> Java -jar WebTester.jar Interactive -k [API_KEY] -ba MyBatch
 
 + Required parametes:
     + `-k [api-key]` , Applitools api key
@@ -85,6 +85,8 @@ validation on the current page of the browser.
 + `-se [url]` - Selenium server/grid url
 + `-an [name]` - Application name
 + `-bn [name]` - Baseline environment name
++ `-brn [name]` - Branch name
++ `-pbn [name]` - Parent branch name
 + `-ct [tob:bottom:left:right]` - Cut provider, avoid the specified amount of pixels from the bound of the screen.
 IE, 100 pixels from the top will be given as `-ct 100:0:0:0`
 + `-as [url]` - Applitools server url
@@ -150,6 +152,6 @@ should be unzipped and placed on the same folder of EyesUtilities.jar or to be i
 + [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
 + [GeckoDriver](https://github.com/mozilla/geckodriver/releases) - Firefox driver
 + [IE Driver](https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver) - Follow the instructions to download only iedriverserver from the selenium repository.
- 
++ [Edge Driver](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/)  - Install the official package
  
  

@@ -17,7 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 public abstract class Test implements ITest {
-    public static final String CURR_VERSION = "0.1.5";
+    public static final String CURR_VERSION = "0.1.8";
 
     private static final String JS_EXECUTE_BEFORE_STEP_FILENAME = "execute_before_step.js";
     private static final String JS_EXECUTE_AFTER_STEP_FILENAME = "execute_after_step.js"; //TODO

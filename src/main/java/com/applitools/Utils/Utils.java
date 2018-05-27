@@ -8,7 +8,7 @@ import java.util.EnumSet;
 public class Utils {
 
     public static <T extends Enum<T>> T parseEnum(Class<T> c, String string) {
-        return Enum.valueOf(c, string.trim().toUpperCase());
+        return Enum.valueOf(c, string.trim());
     }
 
     public static String getEnumValues(Class type) {

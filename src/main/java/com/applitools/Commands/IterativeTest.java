@@ -29,6 +29,10 @@ public class IterativeTest extends ApplitoolsTest {
                     "If provided implicitly, will search for sitemap.xml in the provided location.")
     private String location;
 
+    @Parameter(names = {"-st", "--singletest"},
+            description = "Make all the checkpoints be part of one test.")
+    private boolean singletest = false;
+
     private URI locationUrl_;
     private DocumentBuilder builder_;
     private List<URI> pages_;
@@ -71,6 +75,9 @@ public class IterativeTest extends ApplitoolsTest {
         System.out.printf("Starting test on %s \n", location);
         int newtests = 0, failedtests = 0, total = pages_.size();
         int i = 0;
+        TestResults result = null;
+        if (singletest) eyesOpen(appName, batchName);
+
         for (URI page : pages_) {
             String currAppName = (Strings.isNullOrEmpty(appName))
                     ? (page.getHost() != null ? page.getHost() : "WebTester") : appName;
@@ -80,21 +87,25 @@ public class IterativeTest extends ApplitoolsTest {
             if (Strings.isNullOrEmpty(testName)) testName = "/";
 
 
-            eyesOpen(currAppName, testName);
+            if (!singletest) eyesOpen(currAppName, testName);
             driver_.get(page.toString());
             eyesCheck(page.toString());
 
-            TestResults result = eyes_.close(false);
-            ++i;
-
-            proccessTestgResults(result, testName, i, total);
-
-            if (result.isNew()) ++newtests;
-            else if (!result.isPassed()) ++failedtests;
+            if (!singletest) {
+                result = eyes_.close(false);
+                ++i;
+                proccessTestgResults(result, testName, i, total);
+                if (result.isNew()) ++newtests;
+                else if (!result.isPassed()) ++failedtests;
+            }
         }
 
-        System.out.format("Test ended, Total Steps - %s, %s-Passed, %s-Failed, %s-New \n\n",
-                total, total - newtests - failedtests, failedtests, newtests);
+        if (singletest) {
+            result = eyes_.close(false);
+            printResult(result, batchName);
+        } else
+            System.out.format("Test ended, Total Steps - %s, %s-Passed, %s-Failed, %s-New \n\n",
+                    total, total - newtests - failedtests, failedtests, newtests);
         //TODO print batch url
     }
 

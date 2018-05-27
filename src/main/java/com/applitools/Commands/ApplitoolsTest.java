@@ -76,6 +76,15 @@ public abstract class ApplitoolsTest extends SeleniumTest {
     @Parameter(names = {"-sr", "--scaleRatio"}, description = "Overrides pixel-ratio")
     protected String scaleRatio = null;
 
+    @Parameter(names = {"-os", "--hostos"}, description = "Overrides the OS")
+    protected String hostOs = null;
+
+    @Parameter(names = {"-brn", "--branchName"}, description = "Branch name")
+    protected String branchName = null;
+
+    @Parameter(names = {"-pbn", "--parentBranchName"}, description = "Parent branch name")
+    protected String parentBranchName = null;
+
     protected Eyes eyes_;
 
     public void Init() throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
@@ -97,6 +106,10 @@ public abstract class ApplitoolsTest extends SeleniumTest {
         if (!Strings.isNullOrEmpty(proxyUrl)) eyes_.setProxy(new ProxySettings(proxyUrl));
         if (!Strings.isNullOrEmpty(baselineEnvName)) eyes_.setBaselineEnvName(baselineEnvName);
         if (!Strings.isNullOrEmpty(scaleRatio)) eyes_.setScaleRatio(Double.parseDouble(scaleRatio));
+        if (!Strings.isNullOrEmpty(hostOs)) eyes_.setHostOS(hostOs);
+        if (!Strings.isNullOrEmpty(branchName)) eyes_.setBranchName(branchName);
+        if (!Strings.isNullOrEmpty(parentBranchName)) eyes_.setBranchName(parentBranchName);
+
         if (waitBeforeScreenshot > 0) eyes_.setWaitBeforeScreenshots(waitBeforeScreenshot * 1000);
 
         //Batch Name
@@ -108,7 +121,7 @@ public abstract class ApplitoolsTest extends SeleniumTest {
 
         //Match level
         if (!Strings.isNullOrEmpty(matchLevel)) {
-            MatchLevel ml = Utils.parseEnum(MatchLevel.class, matchLevel);
+            MatchLevel ml = Utils.parseEnum(MatchLevel.class, matchLevel.toUpperCase());
             eyes_.setMatchLevel(ml);
         }
 
@@ -160,7 +173,7 @@ public abstract class ApplitoolsTest extends SeleniumTest {
     protected void eyesCheck(String tag) {
         executeJsBeforeStep(driver_);
 
-        if (Strings.isNullOrEmpty(regionSelector))
+        if (Strings.isNullOrEmpty(regionSelector) || (driver_.findElements(By.cssSelector(regionSelector)).size() == 0))
             eyes_.checkWindow(tag);
         else
             eyes_.checkRegion(By.cssSelector(regionSelector), tag, !disableFullPageScreenshot);

@@ -13,6 +13,8 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
@@ -54,9 +56,7 @@ public abstract class SeleniumTest extends Test {
     protected long pageloadTimeout = -1;
 
     //Session id to attach
-    @Parameter(names = {"-id", "--sessionId"}, description = "Selenium session-id to attach the test", hidden = true)
-
-    //TODO
+    @Parameter(names = {"-id", "--sessionId"}, description = "Selenium session-id to attach the test")
     protected String sessionId;
 
     protected WebDriver driver_;
@@ -69,10 +69,8 @@ public abstract class SeleniumTest extends Test {
 
         Validator.given(sessionId, "Session id (-id)")
                 .isSetThen()
-                .notAllowed(browser, "browser (-br)")
+                .notAllowed(browser, "Browser (-br)")
                 .notAllowed(capsFile, "Caps file (-cf)");
-
-
     }
 
     @Override
@@ -110,6 +108,10 @@ public abstract class SeleniumTest extends Test {
             case Ie:
                 InternetExplorerOptions ioo = new InternetExplorerOptions(caps);
                 return new InternetExplorerDriver(ioo);
+            case Edge:
+                EdgeOptions eo = new EdgeOptions();
+                eo.merge(caps);
+                return new EdgeDriver(eo);
             case Safari:
                 SafariOptions so = new SafariOptions(caps);
                 return new SafariDriver(so);
@@ -162,6 +164,8 @@ public abstract class SeleniumTest extends Test {
             case Internetexplorer:
             case Ie:
                 return DesiredCapabilities.internetExplorer();
+            case Edge:
+                return DesiredCapabilities.edge();
             case Safari:
                 return DesiredCapabilities.safari();
             case Firefox:
@@ -207,7 +211,7 @@ public abstract class SeleniumTest extends Test {
 
     @Override
     public void TearDown() {
-        if (driver_ != null)
+        if (driver_ != null && Strings.isNullOrEmpty(sessionId))
             driver_.quit();
     }
 }

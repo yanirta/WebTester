@@ -74,6 +74,17 @@ public abstract class Validator {
             return this;
         }
 
+        public StringPrecondition required() {
+            if (Strings.isNullOrEmpty(param_))
+                throw new InvalidParameterException(
+                        String.format("Parameter %s is %s",
+                                paramName_,
+                                "required"
+                        ));
+
+            return this;
+        }
+
         public StringPrecondition required(String param, String paramName) {
             return assertOnParam(param, paramName, true);
         }
