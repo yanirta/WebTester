@@ -20,7 +20,7 @@ Note that the Web-Tester was built in Java so every cli command should start wit
 Made to easily validate single url without user intervention.
 
 For example:
-> Java -jar WebTester.jar -k [API_KEY] -pu https://applitools.com/resources
+> Java -jar WebTester.jar Single -k [API_KEY] -pu https://applitools.com/resources
 
 + Required parametes:
     + `-k [api-key]` , Applitools api key
