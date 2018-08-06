@@ -80,7 +80,10 @@ public class IterativeTest extends ApplitoolsTest {
 
         for (URI page : pages_) {
             String currAppName = (Strings.isNullOrEmpty(appName))
-                    ? (page.getHost() != null ? page.getHost() : "WebTester") : appName;
+                    ? (page.getHost() != null
+                            ? page.getHost()
+                            :"WebTester")
+                    : appName;
             String path = Strings.nullToEmpty(page.getPath());
             String fragment = Strings.isNullOrEmpty(page.getFragment()) ? "" : "#" + page.getFragment();
             String testName = path + fragment;

@@ -31,7 +31,7 @@ public abstract class ApplitoolsTest extends SeleniumTest {
 
     //App name
     @Parameter(names = {"-an", "--appName"}, description = "Set own application name, default: WebTester")
-    protected String appName = "WebTester";
+    protected String appName;
 
     //Viewport size
     @Parameter(names = {"-vs", "--viewportsize"}, description = "Set consistent viewport-size of the browser, width:height, ie:1000x600")

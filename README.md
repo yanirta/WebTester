@@ -120,7 +120,7 @@ provided that the content of 'iphone7_sauce.json' is:
 Note: passing `-ct 65:0:0:0` argument will avoid 65 pixels from the top of the screen which are the status and the address bar of iPhone.
 
 ### Running Chrome emulation - Emulated devices in Desktop chrome
- >  Java -jar WebTester.jar Single -k [API-KEY] -pu http://www.asos.com/ 
+ >  Java -jar WebTester.jar Single -k [API-KEY] -pu http://www.applitools.com/ 
  -br Chrome -cf mobile_emulation.json -sr 1"
  
  provided that the content of 'mobile_emulation.json' is:
@@ -147,7 +147,7 @@ Note that in most of the cases the logic will have to wait for elements to load 
  
 ## Prerequisites
 The integration with the different browsers is based on Selenium. To support local executions, the apropriate "driver"
-should be unzipped and placed on the same folder of EyesUtilities.jar or to be installed put in the PATH variable.
+should be unzipped and placed on the same folder of the jar or to be pointed in the PATH variable.
 
 + [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
 + [GeckoDriver](https://github.com/mozilla/geckodriver/releases) - Firefox driver
